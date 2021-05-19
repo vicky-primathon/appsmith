@@ -466,10 +466,13 @@ export const VALIDATORS: Record<VALIDATION_TYPES, Validator> = {
       };
     }
     try {
+      const optionValueType = typeof parsed[0].value;
+
       const isValidOption = (option: { label: any; value: any }) =>
         _.isObject(option) &&
         _.isString(option.label) &&
-        !_.isEmpty(option.label);
+        !_.isEmpty(option.label) &&
+        typeof option.value === optionValueType;
 
       const hasOptions = every(parsed, isValidOption);
       const validOptions = parsed.filter(isValidOption);
