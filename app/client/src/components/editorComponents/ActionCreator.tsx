@@ -234,7 +234,7 @@ const ActionType = {
   copyToClipboard: "copyToClipboard",
   resetWidget: "resetWidget",
 };
-type ActionType = typeof ActionType[keyof typeof ActionType];
+type ActionType = typeof ActionType[keyof typeof ActionType] | number;
 
 const ViewTypes = {
   SELECTOR_VIEW: "SELECTOR_VIEW",

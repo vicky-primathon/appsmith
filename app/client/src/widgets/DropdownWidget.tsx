@@ -137,13 +137,18 @@ class DropdownWidget extends BaseWidget<DropdownWidgetProps, WidgetState> {
     };
   }
 
-  getSelectedOptionValueArr(): string[] {
-    let selectedOptionValueArr: any = [];
+  getSelectedOptionValueArr(): string[] | number[] {
+    let selectedOptionValueArr: any[] = [];
+
+    console.log("###: A", this.props.selectedIndexArr, this.props.options);
+
     if (_.isArray(this.props.selectedIndexArr)) {
       selectedOptionValueArr = this.props.selectedIndexArr.map(
         (indexValue) => this.props.options?.[indexValue].value,
       );
     }
+
+    console.log("###: B", this.props.options);
     return selectedOptionValueArr;
   }
 
@@ -200,7 +205,7 @@ class DropdownWidget extends BaseWidget<DropdownWidgetProps, WidgetState> {
       const selectedOptionValueArr = this.getSelectedOptionValueArr();
 
       const isAlreadySelected = selectedOptionValueArr.includes(
-        selectedOption.value,
+        selectedOption.value as never,
       );
 
       let newSelectedValue = [...selectedOptionValueArr];
@@ -228,8 +233,10 @@ class DropdownWidget extends BaseWidget<DropdownWidgetProps, WidgetState> {
   };
 
   onOptionRemoved = (removedIndex: number) => {
-    const newSelectedValue = this.getSelectedOptionValueArr().filter(
-      (v: string) =>
+    const selectedOptionValueArr: any[] = this.getSelectedOptionValueArr();
+
+    const newSelectedValue = selectedOptionValueArr.filter(
+      (v: string | number) =>
         _.findIndex(this.props.options, { value: v }) !== removedIndex,
     );
 
@@ -254,7 +261,7 @@ class DropdownWidget extends BaseWidget<DropdownWidgetProps, WidgetState> {
 export type SelectionType = "SINGLE_SELECT" | "MULTI_SELECT";
 export interface DropdownOption {
   label: string;
-  value: string;
+  value: string | number;
   icon?: IconName;
   subText?: string;
   id?: string;

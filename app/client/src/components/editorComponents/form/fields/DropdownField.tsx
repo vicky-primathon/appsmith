@@ -5,14 +5,12 @@ import {
   DropdownProps,
 } from "components/designSystems/appsmith/Dropdown";
 import { Field } from "redux-form";
+import { DropdownOption } from "widgets/DropdownWidget";
 
 interface DropdownFieldProps {
   name: string;
   className?: string;
-  options: Array<{
-    label: string;
-    value: string;
-  }>;
+  options: DropdownOption[];
   placeholder: string;
   width?: number | string;
   isSearchable?: boolean;

@@ -1,3 +1,4 @@
+import { options } from "./../pages/common/CustomizedDropdown/HeaderDropdownData";
 import {
   ISO_DATE_FORMAT,
   VALIDATION_TYPES,
@@ -760,27 +761,113 @@ export const VALIDATORS: Record<VALIDATION_TYPES, Validator> = {
     props: WidgetProps,
     dataTree?: DataTree,
   ) => {
-    let values = value;
+    let values: any = value;
 
     if (props) {
       if (props.selectionType === "SINGLE_SELECT") {
         const defaultValue = value && _.isString(value) ? value.trim() : value;
-        return VALIDATORS[VALIDATION_TYPES.TEXT](defaultValue, props, dataTree);
+        // return VALIDATORS[VALIDATION_TYPES.TEXT](defaultValue, props, dataTree);
+
+        const finalValue: any = VALIDATORS[VALIDATION_TYPES.TEXT](
+          defaultValue,
+          props,
+          dataTree,
+        );
+
+        const { isValid, parsed } = VALIDATORS[VALIDATION_TYPES.OPTIONS_DATA](
+          props.options,
+          props,
+          dataTree,
+        );
+
+        if (!isValid) {
+          return {
+            ...finalValue,
+            isValid,
+          };
+        } else {
+          if (typeof parsed[0].value === "number") {
+            finalValue.parsed = _.toNumber(defaultValue);
+          }
+        }
+
+        const isValidDefaultOption = (defaultOption: any) => {
+          let isValuePresent = false;
+          for (let i = 0; i < parsed.length; i++) {
+            if (parsed[i].value === defaultOption) {
+              isValuePresent = true;
+              break;
+            }
+          }
+
+          return isValuePresent;
+        };
+
+        const hasValidDefaultOptions = every(values, isValidDefaultOption);
+
+        if (!hasValidDefaultOptions) {
+          return {
+            ...finalValue,
+            isValid: false,
+          };
+        }
+
+        return { ...finalValue };
       } else if (props.selectionType === "MULTI_SELECT") {
         if (typeof value === "string") {
           try {
             values = JSON.parse(value);
+
             if (!Array.isArray(values)) {
               throw new Error();
             }
           } catch {
             values = value.length ? value.split(",") : [];
+
             if (values.length > 0) {
-              values = values.map((value) => value.trim());
+              values = values.map((value: any) => value.trim());
             }
           }
         }
       }
+    }
+
+    const { isValid, parsed } = VALIDATORS[VALIDATION_TYPES.OPTIONS_DATA](
+      props.options,
+      props,
+      dataTree,
+    );
+
+    if (!isValid) {
+      return {
+        isValid,
+        parsed: [],
+      };
+    } else {
+      if (typeof parsed[0].value === "number" && _.isArray(values)) {
+        values = values.map((v) => +v);
+      }
+    }
+
+    const isValidDefaultOption = (defaultOption: any) => {
+      let isValuePresent = false;
+      for (let i = 0; i < parsed.length; i++) {
+        if (parsed[i].value === defaultOption) {
+          isValuePresent = true;
+          break;
+        }
+      }
+
+      return isValuePresent;
+    };
+
+    const hasValidDefaultOptions = every(values, isValidDefaultOption);
+
+    if (!hasValidDefaultOptions) {
+      return {
+        isValid: false,
+        parsed: values.filter((v: any) => isValidDefaultOption(v)),
+      };
     }
 
     if (Array.isArray(values)) {

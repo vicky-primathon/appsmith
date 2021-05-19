@@ -76,7 +76,8 @@ class DropdownComponent extends Component<DropdownComponentProps> {
   searchItem = (query: string, option: DropdownOption): boolean => {
     return (
       option.label.toLowerCase().indexOf(query.toLowerCase()) > -1 ||
-      option.value.toLowerCase().indexOf(query.toLowerCase()) > -1 ||
+      (option.value as string).toLowerCase().indexOf(query.toLowerCase()) >
+        -1 ||
       (!!option.label &&
         option.label.toLowerCase().indexOf(query.toLowerCase()) > -1)
     );
@@ -143,7 +144,7 @@ class DropdownComponent extends Component<DropdownComponentProps> {
 
 export interface DropdownComponentProps {
   options: DropdownOption[];
-  selectHandler: (selectedValue: string) => void;
+  selectHandler: (selectedValue: string | number) => void;
   selected?: DropdownOption;
   multiselectDisplayType?: "TAGS" | "CHECKBOXES";
   checked?: boolean;

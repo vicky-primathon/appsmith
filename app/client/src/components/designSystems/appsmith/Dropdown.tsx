@@ -4,12 +4,10 @@ import Select from "react-select";
 import { WrappedFieldInputProps } from "redux-form";
 import { theme } from "constants/DefaultTheme";
 import { SelectComponentsConfig } from "react-select/src/components";
+import { DropdownOption } from "widgets/DropdownWidget";
 
 export type DropdownProps = {
-  options: Array<{
-    value: string;
-    label?: string;
-  }>;
+  options: DropdownOption[];
   input: WrappedFieldInputProps;
   placeholder: string;
   width?: number | string;

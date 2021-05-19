@@ -163,7 +163,7 @@ export function KeyValueComponent(props: KeyValueComponentProps) {
             <StyledBox />
             <StyledInputGroup
               dataType={"text"}
-              defaultValue={pair.value}
+              defaultValue={pair.value as string}
               onChange={(value: string) => {
                 updateValue(index, value);
               }}
