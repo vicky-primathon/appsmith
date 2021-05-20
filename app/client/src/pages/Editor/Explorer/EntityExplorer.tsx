@@ -7,9 +7,9 @@ import {
   useActions,
   useFilteredDatasources,
 } from "./hooks";
-import Search from "./ExplorerSearch";
+// import Search from "./ExplorerSearch";
 import ExplorerPageGroup from "./Pages/PageGroup";
-import { NonIdealState, Classes, IPanelProps } from "@blueprintjs/core";
+import { IPanelProps } from "@blueprintjs/core";
 import WidgetSidebar from "../WidgetSidebar";
 import { BUILDER_PAGE_URL } from "constants/routes";
 import history from "utils/history";
@@ -34,11 +34,11 @@ const Wrapper = styled.div`
   }
 `;
 
-const NoResult = styled(NonIdealState)`
-  &.${Classes.NON_IDEAL_STATE} {
-    height: auto;
-  }
-`;
+// const NoResult = styled(NonIdealState)`
+//   &.${Classes.NON_IDEAL_STATE} {
+//     height: auto;
+//   }
+// `;
 
 const StyledDivider = styled(Divider)`
   border-bottom-color: rgba(255, 255, 255, 0.1);
@@ -55,7 +55,8 @@ function EntityExplorer(props: IPanelProps) {
     PerformanceTracker.stopTracking();
   });
   const explorerRef = useRef<HTMLDivElement | null>(null);
-  const { clearSearch, searchKeyword } = useFilteredEntities(searchInputRef);
+  // const { clearSearch, searchKeyword } = useFilteredEntities(searchInputRef);
+  const { searchKeyword } = useFilteredEntities(searchInputRef);
   const datasources = useFilteredDatasources(searchKeyword);
 
   const plugins = useSelector(getPlugins);
@@ -63,17 +64,17 @@ function EntityExplorer(props: IPanelProps) {
   const widgets = useWidgets(searchKeyword);
   const actions = useActions(searchKeyword);
 
-  let noResults = false;
+  // let noResults = false;
   if (searchKeyword) {
-    const noWidgets = Object.values(widgets).filter(Boolean).length === 0;
-    const noActions =
-      Object.values(actions).filter((actions) => actions && actions.length > 0)
-        .length === 0;
-    const noDatasource =
-      Object.values(datasources).filter(
-        (datasources) => datasources && datasources.length > 0,
-      ).length === 0;
-    noResults = noWidgets && noActions && noDatasource;
+    // const noWidgets = Object.values(widgets).filter(Boolean).length === 0;
+    // const noActions =
+    //   Object.values(actions).filter((actions) => actions && actions.length > 0)
+    //     .length === 0;
+    // const noDatasource =
+    //   Object.values(datasources).filter(
+    //     (datasources) => datasources && datasources.length > 0,
+    //   ).length === 0;
+    // noResults = noWidgets && noActions && noDatasource;
   }
   const { openPanel } = props;
   const showWidgetsSidebar = useCallback(
@@ -86,7 +87,7 @@ function EntityExplorer(props: IPanelProps) {
 
   return (
     <Wrapper ref={explorerRef}>
-      <Search clear={clearSearch} ref={searchInputRef} />
+      {/* <Search clear={clearSearch} ref={searchInputRef} /> */}
       <ExplorerPageGroup
         actions={actions}
         datasources={datasources}
@@ -96,14 +97,14 @@ function EntityExplorer(props: IPanelProps) {
         step={0}
         widgets={widgets}
       />
-      {noResults && (
+      {/* {noResults && (
         <NoResult
           className={Classes.DARK}
           description="Try modifying the search keyword."
           icon="search"
           title="No entities found"
         />
-      )}
+      )} */}
       <StyledDivider />
       <JSDependencies />
       <ScrollIndicator containerRef={explorerRef} />
