@@ -1,4 +1,3 @@
-import { options } from "./../pages/common/CustomizedDropdown/HeaderDropdownData";
 import {
   ISO_DATE_FORMAT,
   VALIDATION_TYPES,
@@ -803,7 +802,7 @@ export const VALIDATORS: Record<VALIDATION_TYPES, Validator> = {
           return isValuePresent;
         };
 
-        const hasValidDefaultOptions = every(values, isValidDefaultOption);
+        const hasValidDefaultOptions = isValidDefaultOption(values);
 
         if (!hasValidDefaultOptions) {
           return {

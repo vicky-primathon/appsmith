@@ -19,6 +19,52 @@ const DUMMY_WIDGET: WidgetProps = {
   widgetName: "",
 };
 
+const OPTIONS_STRING = [
+  {
+    label: "Red",
+    value: "RED",
+  },
+  {
+    label: "Green",
+    value: "GREEN",
+  },
+  {
+    label: "Blue",
+    value: "BLUE",
+  },
+  {
+    label: "Orange",
+    value: "ORANGE",
+  },
+  {
+    label: "White",
+    value: "WHITE",
+  },
+];
+
+const OPTIONS_NUMBER = [
+  {
+    label: "Red",
+    value: 1,
+  },
+  {
+    label: "Green",
+    value: 2,
+  },
+  {
+    label: "Blue",
+    value: 3,
+  },
+  {
+    label: "Orange",
+    value: 4,
+  },
+  {
+    label: "White",
+    value: 5,
+  },
+];
+
 describe("Validate Validators", () => {
   it("correctly validates chart series data ", () => {
     const cases = [
@@ -417,6 +463,7 @@ describe("Chart Custom Config validator", () => {
     }
   });
 });
+
 describe("validateDateString test", () => {
   it("Check whether the valid date strings are recognized as valid", () => {
     const validDateStrings = [
@@ -556,22 +603,126 @@ describe("List data validator", () => {
     }
   });
 
-  it("Validates DEFAULT_OPTION_VALUE correctly (string trim and integers)", () => {
+  it("Validates DEFAULT_OPTION_VALUE correctly (with string options single select)", () => {
     const validator = VALIDATORS[VALIDATION_TYPES.DEFAULT_OPTION_VALUE];
-    const widgetProps = { ...DUMMY_WIDGET, selectionType: "SINGLE_SELECT" };
-    const inputs = [100, "something ", "something\n"];
+    const widgetProps: any = {
+      ...DUMMY_WIDGET,
+      selectionType: "SINGLE_SELECT",
+    };
+    // Add String Options
+    widgetProps["options"] = OPTIONS_STRING;
+
+    const inputs = [100, "RED", "something\n"];
     const expected = [
       {
-        isValid: true,
+        isValid: false,
         parsed: "100",
       },
       {
         isValid: true,
+        parsed: "RED",
+      },
+      {
+        isValid: false,
         parsed: "something",
+      },
+    ];
+    inputs.forEach((input, index) => {
+      const response = validator(input, widgetProps);
+      expect(response).toStrictEqual(expected[index]);
+    });
+  });
+
+  it("Validates DEFAULT_OPTION_VALUE correctly (with mumber options single select)", () => {
+    const validator = VALIDATORS[VALIDATION_TYPES.DEFAULT_OPTION_VALUE];
+    const widgetProps: any = {
+      ...DUMMY_WIDGET,
+      selectionType: "SINGLE_SELECT",
+    };
+    // Add String Options
+    widgetProps["options"] = OPTIONS_NUMBER;
+
+    const inputs = [1, "RED", 100];
+    const expected = [
+      {
+        isValid: true,
+        parsed: 1,
+      },
+      {
+        isValid: false,
+        parsed: NaN,
+      },
+      {
+        isValid: false,
+        parsed: 100,
+      },
+    ];
+    inputs.forEach((input, index) => {
+      const response = validator(input, widgetProps);
+      expect(response).toStrictEqual(expected[index]);
+    });
+  });
+
+  it("Validates DEFAULT_OPTION_VALUE correctly (with string options multiple select)", () => {
+    const validator = VALIDATORS[VALIDATION_TYPES.DEFAULT_OPTION_VALUE];
+    const widgetProps: any = {
+      ...DUMMY_WIDGET,
+      selectionType: "MULTIPLE_SELECT",
+    };
+    // Add String Options
+    widgetProps["options"] = OPTIONS_STRING;
+
+    const inputs = [[100], ["RED"], ["something\n"]];
+    const expected = [
+      {
+        isValid: false,
+        parsed: [],
       },
       {
         isValid: true,
-        parsed: "something",
+        parsed: ["RED"],
+      },
+      {
+        isValid: false,
+        parsed: [],
+      },
+    ];
+    inputs.forEach((input, index) => {
+      const response = validator(input, widgetProps);
+      expect(response).toStrictEqual(expected[index]);
+    });
+  });
+
+  it("Validates DEFAULT_OPTION_VALUE correctly (with mumber options multiple select)", () => {
+    const validator = VALIDATORS[VALIDATION_TYPES.DEFAULT_OPTION_VALUE];
+    const widgetProps: any = {
+      ...DUMMY_WIDGET,
+      selectionType: "MULTIPLE_SELECT",
+    };
+    // Add String Options
+    widgetProps["options"] = OPTIONS_NUMBER;
+
+    const inputs = [[1], [1, 2], [1, 2, "RED"], ["RED"], [100]];
+    const expected = [
+      {
+        isValid: true,
+        parsed: [1],
+      },
+      {
+        isValid: true,
+        parsed: [1, 2],
+      },
+      {
+        isValid: false,
+        parsed: [1, 2],
+      },
+      {
+        isValid: false,
+        parsed: [],
+      },
+      {
+        isValid: false,
+        parsed: [],
       },
     ];
     inputs.forEach((input, index) => {
