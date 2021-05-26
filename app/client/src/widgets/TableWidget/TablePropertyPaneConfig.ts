@@ -652,6 +652,24 @@ export default [
         validation: VALIDATION_TYPES.DEFAULT_SELECTED_ROW,
       },
       {
+        propertyName: "totalRecordCount",
+        label: "Total Record Count",
+        controlType: "INPUT_TEXT",
+        placeholderText: "Enter total record count",
+        isBindProperty: true,
+        isTriggerProperty: false,
+        validation: VALIDATION_TYPES.NUMBER,
+      },
+      {
+        propertyName: "defaultPageSize",
+        label: "Default Page Size",
+        controlType: "INPUT_TEXT",
+        placeholderText: "Enter default page size",
+        isBindProperty: true,
+        isTriggerProperty: false,
+        validation: VALIDATION_TYPES.NUMBER,
+      },
+      {
         helpText:
           "Bind the Table.pageNo property in your API and call it onPageChange",
         propertyName: "serverSidePaginationEnabled",

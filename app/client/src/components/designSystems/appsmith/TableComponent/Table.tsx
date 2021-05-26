@@ -38,6 +38,7 @@ interface TableProps {
   columnSizeMap?: { [key: string]: number };
   columns: ReactTableColumnProps[];
   data: Array<Record<string, unknown>>;
+  defaultPageSize?: number;
   editMode: boolean;
   sortTableColumn: (columnIndex: number, asc: boolean) => void;
   handleResizeColumn: (columnSizeMap: { [key: string]: number }) => void;
@@ -54,6 +55,7 @@ interface TableProps {
   selectedRowIndices: number[];
   disableDrag: () => void;
   enableDrag: () => void;
+  totalRecordCount?: number;
   triggerRowSelection: boolean;
   searchTableData: (searchKey: any) => void;
   filters?: ReactTableFilter[];
@@ -108,7 +110,11 @@ export function Table(props: TableProps) {
       }),
     [columnString],
   );
-  const pageCount = Math.ceil(props.data.length / props.pageSize);
+  const pageCount =
+    props.defaultPageSize && props.totalRecordCount
+      ? Math.ceil(props.totalRecordCount / props.defaultPageSize)
+      : Math.ceil(props.data.length / props.pageSize);
+
   const currentPageIndex = props.pageNo < pageCount ? props.pageNo : 0;
   const {
     getTableBodyProps,

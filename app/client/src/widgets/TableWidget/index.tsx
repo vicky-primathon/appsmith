@@ -613,10 +613,28 @@ class TableWidget extends BaseWidget<TableWidgetProps, WidgetState> {
   };
 
   getPageView() {
-    const { pageSize, filteredTableData = [] } = this.props;
+    // Manage Page Size .......................................
+    const pageSize = this.props.defaultPageSize
+      ? this.props.defaultPageSize
+      : this.props.pageSize;
+
+    const { filteredTableData = [] } = this.props;
     const tableColumns = this.getTableColumns() || [];
     const transformedData = this.transformData(filteredTableData, tableColumns);
     const { componentHeight, componentWidth } = this.getComponentDimensions();
+
+    // Handled Table Data .....................................
+    if (this.props.defaultPageSize && this.props.totalRecordCount) {
+      if (
+        this.props.pageNo * this.props.defaultPageSize >
+        this.props.totalRecordCount
+      ) {
+        const count =
+          this.props.totalRecordCount -
+          (this.props.pageNo - 1) * this.props.defaultPageSize;
+        transformedData.splice(count, transformedData.length);
+      }
+    }
 
     return (
       <Suspense fallback={<Skeleton />}>
@@ -625,6 +643,7 @@ class TableWidget extends BaseWidget<TableWidgetProps, WidgetState> {
           columnSizeMap={this.props.columnSizeMap}
           columns={tableColumns}
           compactMode={this.props.compactMode || CompactModeTypes.DEFAULT}
+          defaultPageSize={this.props.defaultPageSize}
           disableDrag={this.toggleDrag}
           editMode={this.props.renderMode === RenderModes.CANVAS}
           filters={this.props.filters}
@@ -650,6 +669,7 @@ class TableWidget extends BaseWidget<TableWidgetProps, WidgetState> {
           serverSidePaginationEnabled={!!this.props.serverSidePaginationEnabled}
           sortTableColumn={this.handleColumnSorting}
           tableData={transformedData}
+          totalRecordCount={this.props.totalRecordCount}
           triggerRowSelection={this.props.triggerRowSelection}
           updateCompactMode={this.handleCompactModeChange}
           updatePageNo={this.updatePageNumber}
@@ -794,6 +814,20 @@ class TableWidget extends BaseWidget<TableWidgetProps, WidgetState> {
 
   handleNextPageClick = () => {
     let pageNo = this.props.pageNo || 1;
+    // Handle Server Side Pagination ................................
+    if (
+      this.props.defaultPageSize &&
+      this.props.pageNo &&
+      this.props.totalRecordCount
+    ) {
+      const isNextClickValid =
+        this.props.defaultPageSize * this.props.pageNo <
+        this.props.totalRecordCount;
+      if (!isNextClickValid) {
+        return;
+      }
+    }
+
     pageNo = pageNo + 1;
     this.props.updateWidgetMetaProperty("pageNo", pageNo, {
       triggerPropertyName: "onPageChange",
